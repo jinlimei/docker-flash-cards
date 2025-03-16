@@ -1,0 +1,33 @@
+
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: banana
+      MYSQL_DATABASE: flashcards
+      MYSQL_USER: flashcards
+      MYSQL_PASSWORD: flashcards
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  cards:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+
+  web:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    depends_on:
+      - cards
+    ports:
+      - "8000:80"
+
+volumes:
+  db_data:
